@@ -1,6 +1,6 @@
 # RAG-audio
 
-This project is using FastAPI, Mistral AI and Qdrant to provide an API for simple RAG from audio. It allows to post an audio file (that contains speech) and interact with its content via natural language. It is a project made for learning and experimenting with the tools.
+This project is using FastAPI, Mistral AI and Qdrant to provide an API for simple RAG from audio. It allows to post an audio file (that contains speech) and interact with its content via natural language. It is a project made to document learning and experimenting with the tools.
 
 ## Installation
 
@@ -23,7 +23,7 @@ mkdir -p secrets && echo YOUR_API_KEY > secrets/mistral_api_key.txt
 The simplest way, if you have Docker installed (requires Docker Compose v2.23.1 or above):
 
 ```sh
-docker compose up
+docker compose up -d
 ```
 
 You can visit http://localhost:6333/dashboard to visualize vectors.
@@ -98,11 +98,18 @@ Note: the query parameter "name" is used to identify the context when calling th
 
 ## Results
 
-### With transcript of the Obama speech from Mistral docs examples:
+With ./test_media/obama.mp3, from Mistral Audio & Transcription docs examples, using the above commands:
+
+### Prompt 1
+
+(embeddings_prompt_1.json)
 
 **prompt:**
-_Should we be hopeful?_ (embeddings_prompt_1.json)
+
+_Should we be hopeful?_
+
 **answer:**
+
 Based on the provided context, the answer to "Should we be hopeful?" is a resounding **yes**. The speaker expresses optimism and highlights numerous reasons for hope, including:
 
 - The resilience and hope of the American people (39.6s).
@@ -113,9 +120,16 @@ Based on the provided context, the answer to "Should we be hopeful?" is a resoun
 
 The speaker emphasizes that these achievements are possible when people come together, suggesting that hope is justified when we work toward shared goals.
 
+### Prompt 2
+
+(embeddings\*prompt_2.json)
+
 **prompt:**
-_Is the topic of democracy discussed?_ (embeddings_prompt_2.json)
+
+_Is the topic of democracy discussed?_
+
 **answer:**
+
 Yes, the topic of democracy is discussed in the provided context. Several chunks explicitly mention democracy, such as:
 
 - "It falls on each of us to be guardians of our democracy." (time: 165.2)
