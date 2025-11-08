@@ -1,0 +1,39 @@
+name: "RAG-audio"
+
+services:
+  fastapi:
+    depends_on: [qdrant]
+    image: transcript-fastapi
+    container_name: fastapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./app:/code/app
+      - ./test_media:/code/test_media
+    restart: unless-stopped
+    secrets:
+      - mistral_api_key
+    environment:
+      ENVIRONMENT: development
+      DOCKER_COMPOSE: true
+      SECRET_MISTRAL_API_KEY: mistral_api_key
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    container_name: qdrant
+    ports:
+      - 6333:6333
+      - 6334:6334
+    expose:
+      - 6333
+      - 6334
+      - 6335
+    volumes:
+      - ./qdrant_data:/qdrant/storage
+
+secrets:
+  mistral_api_key:
+    file: ./secrets/mistral_api_key.txt
