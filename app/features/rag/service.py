@@ -20,20 +20,22 @@ def create_context_from_audio_file(
     embedder: IEmbedder,
     vectors: IVectors,
 ) -> TranscriptUploadResponse:
-
-    transcription_response = transcriber.get_transcription_from_file(
+    # Get text from the provided audio
+    transcript = transcriber.get_transcription_from_file(
         file_name=filename,
         file=file,
     )
-    embeddings_ctx = embedder.embed([s.text for s in transcription_response.segments])
-
+    # Embeddings are created directly from transcript segments
+    # Bit simplistic and might need an intermediate structure
+    embeddings = embedder.embed([s.text for s in transcript.segments])
+    # Then save the vectors to db
+    # NB: embeddings and segments are paired lists
     name = vectors.create(
         collection_name=name,
-        embeddings=embeddings_ctx,
-        segments=transcription_response.segments,
+        embeddings=embeddings,
+        segments=transcript.segments,
     )
-
-    return {"transcript": transcription_response, "name": name}
+    return {"transcript": transcript, "name": name}
 
 
 def generate_query_with_context(
@@ -45,7 +47,7 @@ def generate_query_with_context(
 ) -> TranscriptSearchResponse:
     embeddings_prompt = embedder.embed_single(q)
     result = vectors.search(name, embeddings_prompt)
-
+    # Format retrieval to prompt, could be tweaked too
     formated_ctx = {
         "chunks": [
             {"text": chunk.payload.text, "time": chunk.payload.start}
