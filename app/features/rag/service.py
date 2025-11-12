@@ -75,22 +75,30 @@ def generate_query_with_context(
             for chunk in padded.chunks
         ]
     }
-    prompt = make_prompt(ctx=str(formated_ctx), q=q)
+    prompt = make_prompt(context=str(formated_ctx), query=q)
     chat_response = chat.complete(prompt=prompt)
     return {"answer": chat_response}
 
 
-def make_prompt(ctx: str, q: str):
+def make_prompt(context: str, query: str):
     return f"""
-    You are provided with a context coming from an audio transcript.
-    Each "chunk" of the list represents a relevant part for you to use as context.
-    In each "chunk", there is a "time" timestamp in seconds corresponding to the "text" that you should use to situate your quotes in time.
+    You are an AI assistant answering questions based ONLY on the provided audio transcript context.
+    The context is a JSON object with a "chunks" array. Each chunk contains:
+    - "text": A relevant segment of the transcript.
+    - "time": A timestamp in seconds, indicating when the segment occurred.
 
-    CONTEXT:
+    **Rules:**
+    1. Your answer must be derived exclusively from the context. Do NOT use prior knowledge.
+    2. For every direct quote or key statement in your answer, wrap it in <quote> tags and include its timestamp in <timestamp> tags (in seconds).
+    3. If the answer cannot be derived from the context, say: "I could not find an answer in the provided context."
+    4. You may paraphrase, but always attribute key details to the original text and timestamp.
+    5. If multiple chunks are relevant, include all quotes and timestamps.
+
+    **Context:**
     ---------------------
-    {ctx}
+    {context}
     ---------------------
-    Given the context information and not prior knowledge, answer the query.
-    Query: {q}
-    Answer:
+    **Query:** {query}
+
+    **Answer:**
     """
