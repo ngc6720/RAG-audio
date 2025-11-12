@@ -37,17 +37,14 @@ async def create_context_from_audio_file_handler(
     embedder: embedder_dep,
     vectors: vectors_dep,
 ) -> TranscriptUploadResponse:
-    try:
-        return service.create_context_from_audio_file(
-            name=name,
-            filename=file.filename or "untitled",
-            file=await file.read(),
-            transcriber=transcriber,
-            embedder=embedder,
-            vectors=vectors,
-        )
-    except:
-        raise HTTPException(status_code=404)
+    return service.create_context_from_audio_file(
+        name=name,
+        filename=file.filename or "untitled",
+        file=await file.read(),
+        transcriber=transcriber,
+        embedder=embedder,
+        vectors=vectors,
+    )
 
 
 @router.get(
@@ -61,7 +58,4 @@ def generate_query_with_context_handler(
     vectors: vectors_dep,
     chat: Annotated[IChat, Depends(Chat)],
 ) -> TranscriptSearchResponse:
-    try:
-        return service.generate_query_with_context(q, name, embedder, vectors, chat)
-    except:
-        raise HTTPException(status_code=404)
+    return service.generate_query_with_context(q, name, embedder, vectors, chat)
